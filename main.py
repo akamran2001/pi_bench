@@ -14,6 +14,10 @@ config = {
     "Rust":{
         "build":["cargo", "build","--release", "--manifest-path=Rust_pi/Cargo.toml"],
         "bin":"./Rust_pi/target/release/pi_bench"
+    },
+    "Java":{
+        "build":["javac", "Java_pi/src/Main.java", "-d", "Java_pi/build"],
+        "bin": ["java", "-cp", "Java_pi/build", "Main"]
     }
 }
 
@@ -37,6 +41,13 @@ def bench_c(n,binary):
     c_time = float(re.search(pattern="([0-9].[0-9]*) seconds",string=out_c)[1])
     return c_time
 
+def bench_java(n,binary):
+    args = binary+[str(n)]
+    out_java = subprocess.check_output(args=args).decode("utf-8")
+    java_time = float(re.search(pattern="([0-9].[0-9]*) seconds",string=out_java)[1])
+    return java_time
+
+
 def log_bench(min,max,skip):
     data = []
     
@@ -44,6 +55,7 @@ def log_bench(min,max,skip):
         py_time = bench_py(n)
         rust_time = bench_rust(n,binary=config["Rust"]["bin"])
         c_time = bench_c(n,binary=config["C"]["bin"])
+        java_time = bench_java(n,binary=config["Java"]["bin"])
         
         diff_py_rs = py_time - rust_time
         ratio_py_rs = py_time / rust_time
@@ -51,9 +63,12 @@ def log_bench(min,max,skip):
         diff_py_c = py_time - c_time
         ratio_py_c = py_time / c_time
 
+        diff_py_java = py_time - java_time
+        ratio_py_java = py_time / java_time
+
         #print(F"{n} terms",F"Python - Rust - C",F"1x - {ratio_py_rs}x - {ratio_py_c}x",sep="\n")
         
-        data.append([n, py_time, rust_time, c_time ,diff_py_rs, diff_py_c, ratio_py_rs, ratio_py_c])
+        data.append([n, py_time, rust_time, c_time, java_time ,diff_py_rs, diff_py_c, diff_py_java, ratio_py_rs, ratio_py_c, ratio_py_java])
     
     return data
 
@@ -68,9 +83,9 @@ def compile_bins():
             print(F"{out.stderr.decode('utf-8')}")
 
 def run_analysis():
-    compile_bins();
+    #compile_bins()
     
-    header = ['terms', 'python', 'rust', 'c', 'py-rs', 'py-c', 'py/rs', 'py/c']
+    header = ['terms', 'python', 'rust', 'c', 'java', 'py-rs', 'py-c', 'py-j', 'py/rs', 'py/c', 'py/j']
 
     data = log_bench(min=100_000,max=1_000_000,skip=10_000)
 
@@ -85,12 +100,19 @@ def run_analysis():
             "xlabel":"Number of terms used in Leibniz formula for π",
     }
 
+    df.plot(**plot_config,y=["c","python","rust","java"],logy=True, ylabel="Seconds taken log scale")
+    
     df.plot(**plot_config,y=["c","python","rust"],logy=True, ylabel="Seconds taken log scale")
+
     max_cr = df[['c', 'rust']].max().max()
     df.plot(**plot_config,y=["c","rust"],ylim=(0,max_cr+(0.15*max_cr)), ylabel="Seconds taken")
+
+    df.plot(**plot_config,y=["python","java"],logy=True, ylabel="Seconds taken log scale")
     
 
 run_analysis()
+
+
 
 
 

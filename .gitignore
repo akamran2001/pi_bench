@@ -2,3 +2,4 @@
 /C_pi/build/*
 */target
 */__pycache__
+/Java_pi/build/*
