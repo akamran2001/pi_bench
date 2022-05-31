@@ -1,4 +1,4 @@
 /.vscode
-*/build
+/C_pi/build/*
 */target
 */__pycache__
