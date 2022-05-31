@@ -3,7 +3,6 @@ import pandas as pd
 from multiprocessing import Process, Queue
 import re
 import subprocess
-import timeit
 from Python_pi.main import calc_pi
 
 config = {
@@ -18,17 +17,17 @@ config = {
     "Java":{
         "build":["javac", "Java_pi/src/Main.java", "-d", "Java_pi/build"],
         "bin": ["java", "-cp", "Java_pi/build", "Main"]
+    },
+    "Python": {
+        "build":["python","Python_pi/main.py"],
+        "bin":["python","Python_pi/main.py"]
     }
 }
 
-def bench_py(n):
-    start = timeit.default_timer()
-    q = Queue()
-    p = Process(target=lambda q,n: q.put(calc_pi(n)), args=(q,n))
-    p.start()
-    p.join()
-    pi =  q.get()
-    py_time = timeit.default_timer() - start
+def bench_py(n,binary):
+    args = binary+[str(n)]
+    out_py = subprocess.check_output(args=args).decode("utf-8")
+    py_time = float(re.search(pattern="([0-9].[0-9]*) seconds",string=out_py)[1])
     return py_time
 
 def bench_rust(n,binary):
@@ -52,7 +51,7 @@ def log_bench(min,max,skip):
     data = []
     
     for n in range(min,max,skip):
-        py_time = bench_py(n)
+        py_time = bench_py(n, binary=config["Python"]["bin"])
         rust_time = bench_rust(n,binary=config["Rust"]["bin"])
         c_time = bench_c(n,binary=config["C"]["bin"])
         java_time = bench_java(n,binary=config["Java"]["bin"])
@@ -83,7 +82,7 @@ def compile_bins():
             print(F"{out.stderr.decode('utf-8')}")
 
 def run_analysis():
-    #compile_bins()
+    compile_bins()
     
     header = ['terms', 'python', 'rust', 'c', 'java', 'py-rs', 'py-c', 'py-j', 'py/rs', 'py/c', 'py/j']
 
@@ -111,11 +110,5 @@ def run_analysis():
     
 
 run_analysis()
-
-
-
-
-
-
 
 # %%
