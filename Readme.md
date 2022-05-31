@@ -1,4 +1,3 @@
-# Build C
-``` gcc -O3 c_src/main.c -o c_src/build/pi_c ```
-# Build RS
-``` cargo build --release ```
+# Bench Pi
+
+- Benchmark C, Python, and Rust by calculating Pi using the Leibniz formula for π in all 3 languages
