@@ -19,4 +19,4 @@ if(len(sys.argv)==2):
     py_time = timeit.default_timer() - start
     print(F"Pi using {n} additions is {pi} and took {py_time} seconds in Python")
 else:
-    print("ERROR")
+    print("Ran without args")
