@@ -22,7 +22,7 @@ class Main {
         long startTime = System.nanoTime();
         double pi = calc_pi(n);
         long endTime = System.nanoTime();
-        long timeElapsed = endTime - startTime;
-        System.out.printf("Pi using %d additions is %f and took %d seconds in Java", n, pi, timeElapsed);
+        double timeElapsed = (endTime - startTime) * 1e-9;
+        System.out.printf("Pi using %d additions is %f and took %f seconds in Java", n, pi, timeElapsed);
     }
 }

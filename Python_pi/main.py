@@ -1,4 +1,4 @@
-import timeit
+import time
 import sys
 
 def calc_pi(n):
@@ -14,9 +14,9 @@ def calc_pi(n):
 
 if(len(sys.argv)==2):
     n = int(sys.argv[1])
-    start = timeit.default_timer()
+    start = time.time()
     pi = calc_pi(n)
-    py_time = timeit.default_timer() - start
+    py_time = time.time() - start
     print(F"Pi using {n} additions is {pi} and took {py_time} seconds in Python")
 else:
     print("Ran without args")

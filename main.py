@@ -1,3 +1,4 @@
+# %%
 import pandas as pd
 from multiprocessing import Process, Queue
 import re
@@ -108,13 +109,18 @@ if(__name__== "__main__"):
     df.plot(**plot_config,y=["c","python","rust","java"],logy=True, ylabel="Seconds taken log scale")
     plt.show()
     
+    
     df.plot(**plot_config,y=["c","python","rust"],logy=True, ylabel="Seconds taken log scale")
     plt.show()
 
+    
     max_cr = df[['c', 'rust']].max().max()
     df.plot(**plot_config,y=["c","rust"],ylim=(0,max_cr+(0.15*max_cr)), ylabel="Seconds taken")
     plt.show()
 
+    
     df.plot(**plot_config,y=["python","java"],logy=True, ylabel="Seconds taken log scale")
     plt.show()
 
+
+# %%
